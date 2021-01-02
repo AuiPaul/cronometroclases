@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.js": "/cronometroclases/static/js/main.a64fb450.chunk.js",
+    "main.js.map": "/cronometroclases/static/js/main.a64fb450.chunk.js.map",
+    "runtime-main.js": "/cronometroclases/static/js/runtime-main.57b74dc4.js",
+    "runtime-main.js.map": "/cronometroclases/static/js/runtime-main.57b74dc4.js.map",
+    "static/js/2.850f2dbb.chunk.js": "/cronometroclases/static/js/2.850f2dbb.chunk.js",
+    "static/js/2.850f2dbb.chunk.js.map": "/cronometroclases/static/js/2.850f2dbb.chunk.js.map",
+    "index.html": "/cronometroclases/index.html",
+    "static/js/2.850f2dbb.chunk.js.LICENSE.txt": "/cronometroclases/static/js/2.850f2dbb.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.57b74dc4.js",
+    "static/js/2.850f2dbb.chunk.js",
+    "static/js/main.a64fb450.chunk.js"
+  ]
+}
