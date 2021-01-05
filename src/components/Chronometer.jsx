@@ -1,9 +1,6 @@
  
 
-
-
-
-import React, { Component } from 'react';
+import React, { useState ,useEffect} from 'react';
 
 import { generate as id } from 'shortid'
 
@@ -48,35 +45,52 @@ text-shadow:none;
 
 `
 
-class Chronometer extends Component {
+const Chronometer = () => { 
 
-    state = {
+
+
+    const [clock,setClock] = useState ({
         horas: 0,
         minutos: 0,
         segundos: 0,
-        milisegundos: 0,
-        running: false,
-        allTimestamps: [],
-        started: false
-    }
+        milisegundos: 0
+    })
 
+
+
+    const [running,setRunnig] = useState(false)
+    const [allTimestamps,setAllTimestamps] = useState([])
+    const [started,setStarted] = useState(false)
+    
+  
+
+ 
     //Función que se llama con el boton start
-    handleStartClick = () => {
-        if (!this.state.running) {
-            this.interval = setInterval(() => {
-                this.tick()
-            }, 100)
+    
+    useEffect (() => {
+        if (running) {
+            const interval = setInterval (()=>{
+                tick()
+            },100 )
 
-            this.setState({ running: true, started: true })
+            return () => clearInterval(interval)
+        }
+        
+        
+    }, [running,clock ]);
+
+
+    const  handleStartClick = () => {
+        if ( !running) {        
+            setRunnig (true)
+            setStarted(true)            
         }
     }
 
     //Conteo del cronómetro
-    tick() {
-        let horas = this.state.horas
-        let minutos = this.state.minutos
-        let segundos = this.state.segundos
-        let milisegundos = this.state.milisegundos + 1
+   const tick = () => {
+        let  {horas,minutos,segundos,milisegundos} = clock
+        milisegundos = milisegundos + 1
 
         if (milisegundos === 10) {
             milisegundos = 0
@@ -93,71 +107,76 @@ class Chronometer extends Component {
             horas = horas + 1
         }
 
-        this.updateTimer(horas, minutos, segundos, milisegundos)
+        updateTimer(horas, minutos, segundos, milisegundos)
     }
 
     //Función que se llama con el boton stop
-    handleStopClick = () => {
-        if (this.state.running) {
-            clearInterval(this.interval)
-            this.setState({ running: false })
+ const   handleStopClick = () => {
+        if ( running) {    
+                              
+            setRunnig(false)
         }
     }
 
     //Función que se llama con el boton timestamp
-    handleTimestamp = () => {
-        const { horas, minutos, segundos, milisegundos, allTimestamps } = this.state
+    const  handleTimestamp = () => {
+       
 
-        const timestamp = { horas, minutos, segundos, milisegundos }
+        const timestamp = {
+        horas : clock.horas,
+        minutos :clock.minutos, 
+        segundos: clock.segundos, 
+        milisegundos:clock.milisegundos }
 
-        const timestamps = allTimestamps
+    
+       setAllTimestamps([
+            ...allTimestamps,
+            timestamp
 
-        timestamps.push(timestamp)
-
-        this.setState({ allTimestamps: timestamps })
+       ])
 
     }
 
     //Función que se llama con el boton reset
-    handleReset = () => {
-        this.updateTimer(0, 0, 0, 0)
-        this.setState({ allTimestamps: [], started: false })
+   const  handleReset = () => {
+        updateTimer(0, 0, 0, 0)
+         setAllTimestamps ([])
+         setStarted(false)
+         
     }
 
     //Función de actualización del estado
-    updateTimer(horas, minutos, segundos, milisegundos) {
-        this.setState({
-            horas, minutos, segundos, milisegundos
-        })
+   const updateTimer = (horas, minutos, segundos, milisegundos) =>{
+        setClock( {horas, minutos, segundos, milisegundos})
     }
 
-    addZero(value) {
-        return value < 10 ? `0${value}` : value
-    }
+   const addZero = (value) => (
+         value < 10 ? `0${value}` : value
+    )
 
-    render() {
-        let { horas, minutos, segundos, milisegundos, running, allTimestamps } = this.state
-        horas = this.addZero(horas)
-        minutos = this.addZero(minutos)
-        segundos = this.addZero(segundos)
-        milisegundos = this.addZero(milisegundos)
+    
+        let { horas, minutos, segundos, milisegundos } = clock
+        horas = addZero(horas)
+        minutos = addZero(minutos)
+        segundos = addZero(segundos)
+        milisegundos = addZero(milisegundos)
         return (
             <>  
                 <NumCrono>{`${horas}:${minutos} : ${segundos}:${milisegundos}`}</NumCrono>
-                <Elboton disabled={running} onClick={this.handleStartClick}> INICIAR </Elboton>
-                <Elboton disabled={!running} onClick={this.handleStopClick}> PARAR </Elboton>
-                <Elboton disabled={!running} onClick={this.handleTimestamp}> MARCAR TIEMPO </Elboton>
-                {this.state.started && <Elboton disabled={running} onClick={this.handleReset}> REINICIAR </Elboton>}
+                <Elboton disabled={running} onClick={handleStartClick}> INICIAR </Elboton>
+                <Elboton disabled={!running} onClick={handleStopClick}> PARAR </Elboton>
+                <Elboton disabled={!running} onClick={handleTimestamp}> MARCAR TIEMPO </Elboton>
+                {started && <Elboton disabled={running} onClick={handleReset}> REINICIAR </Elboton>}
 
                 <Unalista>
                     {allTimestamps.map((timestamp, idx) => (
                         <li key={id()}>
                             {`
                                 ${idx + 1} -
-                                ${this.addZero(timestamp.horas)} :
-                                ${this.addZero(timestamp.minutos)} :
-                                ${this.addZero(timestamp.segundos)} :
-                                ${this.addZero(timestamp.milisegundos)}
+                                ${addZero(timestamp.horas)} :
+                                ${addZero(timestamp.minutos)} :
+                                ${addZero(timestamp.segundos)} :
+                                ${addZero(timestamp.milisegundos)}
                             `}
                         </li>
                     ))}
@@ -166,6 +185,7 @@ class Chronometer extends Component {
             </>
         )
     }
-}
+
 
 export default Chronometer;
+
